@@ -33,15 +33,15 @@ public class BookingTests {
     public static void setup() {
         RestAssured.baseURI = "https://restful-booker.herokuapp.com";
         faker = new Faker();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/dd/mm");
-        Date checkin = faker.date().future(1, TimeUnit.HOURS);
-        Date checkout = faker.date().future(1,TimeUnit.HOURS, checkin);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        Date checkin = faker.date().future(1, TimeUnit.DAYS);
+        Date checkout = faker.date().future(10, TimeUnit.DAYS, checkin);
         BookingDates bookingdates = new BookingDates(dateFormat.format(checkin), dateFormat.format(checkout));
         booking = new Booking(faker.name().firstName(),
                 faker.name().lastName(),
                 faker.number().numberBetween(0, 1000),
-                faker.bool().bool(), 
-                bookingdates, 
+                faker.bool().bool(),
+                bookingdates,
                 faker.lorem().sentence());
     }
 
@@ -88,10 +88,22 @@ public class BookingTests {
                 .when()
                 .post("/booking")
                 .then()
+                .log().all()
                 .assertThat().statusCode(200).and()
                 .time(Matchers.lessThan(2000L)).and()
                 .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("createBookingResponseSchema.json"));
+
     }
 
+    @Test
+    public void GetBooking_AllIds_ReturnOk() {
+        request
+                .when()
+                .get("/booking")
+                .then()
+                .assertThat().statusCode(200)
+                .contentType(ContentType.JSON)
+                .and().body("results", Matchers.hasSize(Matchers.greaterThan(0)));
+    }
 
 }
