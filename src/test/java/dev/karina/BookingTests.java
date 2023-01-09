@@ -12,23 +12,37 @@ import org.junit.jupiter.api.Test;
 
 import com.github.javafaker.Faker;
 
-import Entities.Credencial;
+import dev.karina.Entities.Booking;
+import dev.karina.Entities.BookingDates;
+import dev.karina.Entities.Credencial;
 import io.restassured.RestAssured;
 import io.restassured.config.LogConfig;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import io.restassured.specification.RequestSpecification;
+
 public class BookingTests {
-    
 
     public static RequestSpecification request;
     private static Credencial credencial;
+    private static Booking booking;
+    private static Faker faker;
 
     @BeforeAll
     public static void setup() {
         RestAssured.baseURI = "https://restful-booker.herokuapp.com";
-        
+        faker = new Faker();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/dd/mm");
+        Date checkin = faker.date().future(1, TimeUnit.HOURS);
+        Date checkout = faker.date().future(1,TimeUnit.HOURS, checkin);
+        BookingDates bookingdates = new BookingDates(dateFormat.format(checkin), dateFormat.format(checkout));
+        booking = new Booking(faker.name().firstName(),
+                faker.name().lastName(),
+                faker.number().numberBetween(0, 1000),
+                faker.bool().bool(), 
+                bookingdates, 
+                faker.lorem().sentence());
     }
 
     @BeforeEach
@@ -67,5 +81,17 @@ public class BookingTests {
                 .body("token", Matchers.isA(String.class));
     }
 
-   
+    @Test
+    public void CreateBooking_WithValidData_ReturnOk() {
+        request
+                .body(booking)
+                .when()
+                .post("/booking")
+                .then()
+                .assertThat().statusCode(200).and()
+                .time(Matchers.lessThan(2000L)).and()
+                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("createBookingResponseSchema.json"));
+    }
+
+
 }

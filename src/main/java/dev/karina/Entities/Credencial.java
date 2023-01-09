@@ -1,4 +1,4 @@
-package Entities;
+package dev.karina.Entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
