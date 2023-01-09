@@ -8,7 +8,10 @@ import java.util.concurrent.TimeUnit;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import com.github.javafaker.Faker;
 
@@ -20,14 +23,18 @@ import io.restassured.config.LogConfig;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
 import io.restassured.module.jsv.JsonSchemaValidator;
+import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BookingTests {
 
     public static RequestSpecification request;
     private static Credencial credencial;
     private static Booking booking;
     private static Faker faker;
+    private static String bookingId;
+    private static Response response;
 
     @BeforeAll
     public static void setup() {
@@ -58,6 +65,7 @@ public class BookingTests {
     }
 
     @Test
+    @Order(1)
     public void Ping_HealthCheck_Return201() {
         request
                 .when()
@@ -67,6 +75,7 @@ public class BookingTests {
     }
 
     @Test
+    @Order(2)
     public void CreateToken_WithValidData_ReturnOk() {
         Properties prop = Manipular.getProp();
         String userName = prop.getProperty("username");
@@ -82,8 +91,9 @@ public class BookingTests {
     }
 
     @Test
+    @Order(3)
     public void CreateBooking_WithValidData_ReturnOk() {
-        request
+        Response response = request
                 .body(booking)
                 .when()
                 .post("/booking")
@@ -91,12 +101,14 @@ public class BookingTests {
                 .log().all()
                 .assertThat().statusCode(200).and()
                 .time(Matchers.lessThan(2000L)).and()
-                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("createBookingResponseSchema.json"));
-
+                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("createBookingResponseSchema.json"))
+                .extract().response();
+        bookingId = response.path("bookingid").toString();
     }
 
     @Test
-    public void GetBooking_AllIds_ReturnOk() {
+    @Order(4)
+    public void GetBookingIds_AllIds_ReturnOk() {
         request
                 .when()
                 .get("/booking")
@@ -105,5 +117,42 @@ public class BookingTests {
                 .contentType(ContentType.JSON)
                 .and().body("results", Matchers.hasSize(Matchers.greaterThan(0)));
     }
+
+    @Test
+    @Order(5)
+    public void GetBookingIds_FilerByName_ReturnOk() {
+        request
+                .when()
+                .get("/booking?firstname=" + booking.getFirstname() + "&lastname=" + booking.getLastname())
+                .then()
+                .assertThat().statusCode(200)
+                .contentType(ContentType.JSON)
+                .and().body("results", Matchers.hasSize(Matchers.greaterThan(0)));
+    }
+
+    @Test
+    @Order(5)
+    public void GetBookingIds_FilerByCkeckinCheckoutDate_ReturnOk() {
+        request
+                .when()
+                .get("/booking?checkout=" + booking.getBookingdates().getCheckout())
+                .then()
+                .assertThat().statusCode(200)
+                .contentType(ContentType.JSON)
+                .and().body("results", Matchers.hasSize(Matchers.greaterThan(0)));
+    }
+
+    @Test
+    @Order(6)
+    public void GetBooking_WithValidData_ReturnOk() {
+        request
+                .when()
+                .get("/booking/" + bookingId)
+                .then()
+                .assertThat().statusCode(200).and()
+                .time(Matchers.lessThan(2000L)).and()
+                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("createBookingResponseSchema.json"));
+    }
+
 
 }
