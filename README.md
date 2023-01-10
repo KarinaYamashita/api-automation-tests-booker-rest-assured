@@ -1,6 +1,6 @@
 # Automação de testes com REST-assured e Java :handbag:
 
-Esse repositório contém uma palicação para testes de performace da API : **[restful-booker](https://restful-booker.herokuapp.com/)**, disponibilizada para a prática de teste pela Swagger. A aplicação foi desenvolvida em Java, utilizando o Java DSL REST Assured, empregando BDD. 
+Esse repositório contém uma palicação para testes de performace da API : **[restful-booker](https://restful-booker.herokuapp.com/)**. A aplicação foi desenvolvida em Java, utilizando o Java DSL REST Assured, empregando BDD. 
 
 ## Features
 
