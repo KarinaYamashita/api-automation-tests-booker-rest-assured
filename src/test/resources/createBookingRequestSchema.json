@@ -47,9 +47,5 @@
                 "additionalneeds"
             ]
         }
-    },
-    "required": [
-        "bookingid",
-        "booking"
-    ]
+    }
 }
