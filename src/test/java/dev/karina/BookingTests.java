@@ -35,12 +35,13 @@ public class BookingTests {
     private static Faker faker;
     private static String bookingId;
     private static Response response;
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+    private static String token;
 
     @BeforeAll
     public static void setup() {
         RestAssured.baseURI = "https://restful-booker.herokuapp.com";
         faker = new Faker();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         Date checkin = faker.date().future(1, TimeUnit.DAYS);
         Date checkout = faker.date().future(10, TimeUnit.DAYS, checkin);
         BookingDates bookingdates = new BookingDates(dateFormat.format(checkin), dateFormat.format(checkout));
@@ -81,19 +82,21 @@ public class BookingTests {
         String userName = prop.getProperty("username");
         String password = prop.getProperty("password");
         credencial = new Credencial(userName, password);
-        request
+        response = request
                 .body(credencial)
                 .when()
                 .post("/auth")
                 .then()
                 .assertThat().statusCode(200).and()
-                .body("token", Matchers.isA(String.class));
+                .body("token", Matchers.isA(String.class))
+                .extract().response();
+        token = response.path("token");
     }
 
     @Test
     @Order(3)
     public void CreateBooking_WithValidData_ReturnOk() {
-        Response response = request
+        response = request
                 .body(booking)
                 .when()
                 .post("/booking")
@@ -131,11 +134,12 @@ public class BookingTests {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     public void GetBookingIds_FilerByCkeckinCheckoutDate_ReturnOk() {
         request
                 .when()
-                .get("/booking?checkout=" + booking.getBookingdates().getCheckout())
+                .queryParam("checkout", booking.getBookingdates().getCheckout())
+                .get("/booking")
                 .then()
                 .assertThat().statusCode(200)
                 .contentType(ContentType.JSON)
@@ -143,7 +147,7 @@ public class BookingTests {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     public void GetBooking_WithValidData_ReturnOk() {
         request
                 .when()
@@ -154,5 +158,66 @@ public class BookingTests {
                 .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("createBookingResponseSchema.json"));
     }
 
+    @Test
+    @Order(8)
+    public void UpdateBooking_WithValidData_ReturnOk() {
+        faker = new Faker();
+        Date checkin = faker.date().future(1, TimeUnit.DAYS);
+        Date checkout = faker.date().future(10, TimeUnit.DAYS, checkin);
+        BookingDates bookingdates = new BookingDates(dateFormat.format(checkin), dateFormat.format(checkout));
+        Booking booking2 = new Booking(faker.name().firstName(),
+                faker.name().lastName(),
+                faker.number().numberBetween(0, 1000),
+                faker.bool().bool(),
+                bookingdates,
+                faker.lorem().sentence());
+        request
+                .header("Cookie", "token=" + token)
+                .contentType(ContentType.JSON)
+                .body(booking2)
+                .when()
+                .put("/booking/" + bookingId)
+                .then()
+                .log().all()
+                .assertThat().statusCode(200).and()
+                .time(Matchers.lessThan(2000L)).and()
+                .body("firstname", Matchers.equalTo(booking2.getFirstname()))
+                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("createBookingResponseSchema.json"));
+    }
+
+    @Test
+    @Order(9)
+    public void PartialUpdateBooking_WithValidData_ReturnOk() {
+        faker = new Faker();
+        String firstNamePartialUpdate = faker.name().firstName();
+        String lastNamePartialUpdate = faker.name().lastName();
+        String bookingString = "{\n" +
+                " \"firstname\": \"" + firstNamePartialUpdate + "\" ,\n" +
+                " \"lastname\": \"" + lastNamePartialUpdate + "\"    \n}";
+        request
+                .header("Cookie", "token=" + token)
+                .contentType(ContentType.JSON)
+                .body(bookingString)
+                .when()
+                .patch("/booking/" + bookingId)
+                .then()
+                .log().all()
+                .assertThat().statusCode(200).and()
+                .time(Matchers.lessThan(2000L)).and()
+                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("createBookingResponseSchema.json"));
+    }
+
+    @Test
+    @Order(10)
+    public void DeleteBooking_UserExists_ReturneOk() {
+        request
+                .header("Cookie", "token=" + token)
+                .when()
+                .delete("/booking/" + bookingId)
+                .then()
+                .assertThat().statusCode(201)
+                .and().time(Matchers.lessThan(2000L))
+                .log();
+    }
 
 }
