@@ -155,7 +155,7 @@ public class BookingTests {
                 .then()
                 .assertThat().statusCode(200).and()
                 .time(Matchers.lessThan(2000L)).and()
-                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("createBookingResponseSchema.json"));
+                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("createBookingRequestSchema.json"));
     }
 
     @Test
@@ -182,7 +182,7 @@ public class BookingTests {
                 .assertThat().statusCode(200).and()
                 .time(Matchers.lessThan(2000L)).and()
                 .body("firstname", Matchers.equalTo(booking2.getFirstname()))
-                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("createBookingResponseSchema.json"));
+                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("createBookingRequestSchema.json"));
     }
 
     @Test
@@ -204,7 +204,7 @@ public class BookingTests {
                 .log().all()
                 .assertThat().statusCode(200).and()
                 .time(Matchers.lessThan(2000L)).and()
-                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("createBookingResponseSchema.json"));
+                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("createBookingRequestSchema.json"));
     }
 
     @Test
