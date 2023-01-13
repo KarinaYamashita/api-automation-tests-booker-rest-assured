@@ -27,8 +27,10 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
+    - name: Create properties folder
+      run: mkdir src/main/properties 
     - name: Get credentials from secrets
-      run: mkdir src/main/properties | echo ${{secrets.LOGIN_CREDENTIALS}} > ./scr/main/properties/login.properties
+      run: echo ${{secrets.LOGIN_CREDENTIALS}} > ./src/main/properties/login.properties
     - name: Build with Maven
       run: mvn test allure:report
 
