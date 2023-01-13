@@ -51,6 +51,8 @@ Para o desenvolvimento deste projeto a estrutura de diretórios é:
 
 - docs: armazena o relatório gerado pelo allure no formato html.
 
+- Teste Manual(Postman): diretório responsável por armazenar a collection gerada para realizar os testes manuais da API.
+
 ## Autora :princess:
 
 - Karina Yamashita 
