@@ -28,7 +28,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Get credentials from secrets
-      run: echo ${secrets.LOGIN_CREDENTIALS} > scr/main/properties/login.properties
+      run: echo ${{secrets.LOGIN_CREDENTIALS}} > scr/main/properties/login.properties
     - name: Build with Maven
       run: mvn test allure:report
 
