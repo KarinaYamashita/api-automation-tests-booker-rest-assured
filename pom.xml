@@ -125,6 +125,7 @@
           <version>2.12.0</version>
           <configuration>
               <reportVersion>${allure.version}</reportVersion>
+              <reportDirectory>${project.basedir}/docs</reportDirectory>
           </configuration>
       </plugin>
 
