@@ -1,6 +1,10 @@
 # Automação de testes com REST-assured e Java :handbag:
 
-Esse repositório contém uma palicação para testes de performace da API : **[restful-booker](https://restful-booker.herokuapp.com/)**. A aplicação foi desenvolvida em Java, utilizando o Java DSL REST Assured, empregando BDD. 
+[![Java CI with Maven](https://github.com/KarinaYamashita/api-automation-tests-booker-rest-assured/actions/workflows/maven.yml/badge.svg)](https://github.com/KarinaYamashita/api-automation-tests-booker-rest-assured/actions/workflows/maven.yml)
+
+Esse repositório contém uma palicação para testes de performace da API : **[restful-booker](https://restful-booker.herokuapp.com/)**. A aplicação foi desenvolvida em Java, utilizando o Java DSL REST Assured, empregando BDD e Continuous Integretion (CI) com GitHub Actions. 
+
+Você pode conferir os resultados dos testes **[clicando aqui](https://karinayamashita.github.io/api-automation-tests-booker-rest-assured/)**.
 
 ## Features
 
@@ -22,6 +26,10 @@ Esse repositório contém uma palicação para testes de performace da API : **[
 
 - Allure
 
+- GitHub Actions
+
+- GitHub Pages
+
 ## Pré-requisitos
 A aplicação foi testada com as versões das ferramentas, que são listadas abaixo:
 
@@ -40,6 +48,8 @@ Para o desenvolvimento deste projeto a estrutura de diretórios é:
 - test: diretório que contém os sub diretórios utilizados para armazenar os arquivos onde foram codificados os testes.
 
 - resources: Local onde foram armazenados os schemas utilizados nos testes.
+
+- docs: armazena o relatório gerado pelo allure no formato html.
 
 ## Autora :princess:
 
