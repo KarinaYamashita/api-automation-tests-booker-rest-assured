@@ -13,6 +13,10 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"// Seta o token na variável token utilizada no teste GetBooking",
+							"// const token = pm.response.json().token",
+							"// pm.collectionVariables.set(\"token\", token)",
+							"",
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});",
@@ -30,9 +34,7 @@
 							"    pm.expect(pm.response.text()).to.include(\"token\");",
 							"});",
 							"",
-							"// Seta o token na variável token utilizada no teste GetBooking",
-							"const token = pm.response.json().token",
-							"pm.collectionVariables.set(\"token\", token)"
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -819,6 +821,36 @@
 						],
 						"type": "text/javascript"
 					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// const options = {",
+							"//   url : 'https://restful-booker.herokuapp.com/auth',",
+							"//   method : 'POST',",
+							"//   header: {",
+							"//     'Accept': '*/*',",
+							"//     'Content-Type': 'application/x-www-form-urlencoded',",
+							"//   },",
+							"//   body: {",
+							"//     mode: 'urlencoded',",
+							"//     urlencoded : [",
+							"//       { key: 'username', value: 'admin'},",
+							"//       { key: 'password', value: 'password123'},",
+							"//     ]",
+							"//   }",
+							"// };",
+							"",
+							"// // Seta o token na variável token utilizada no teste GetBooking",
+							"// pm.sendRequest(options, function(err, response){",
+							"//     console.log(\"get acesstoken\");",
+							"//     console.log(response.token);",
+							"//     pm.collectionVariables.set(\"token\", response.token)",
+							"// });"
+						],
+						"type": "text/javascript"
+					}
 				}
 			],
 			"request": {
@@ -832,7 +864,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"firstname\" : \"Julia\"\n}",
+					"raw": "{\n    \"firstname\" : \"Julia\",\n    \"lastname\" : \"Brown\",\n    \"totalprice\" : 0,\n    \"depositpaid\" : false,\n    \"bookingdates\" : {\n        \"checkin\" : \"2018-09-15\",\n        \"checkout\" : \"2018-10-01\"\n    },\n    \"additionalneeds\" : \"Breakfast\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1014,7 +1046,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"firstname\" : \"James\",\n    \"lastname\" : \"Brown\"\n}",
+					"raw": "{\n    \"firstname\" : \"James\",\n    \"lastname\" : \"Mimi\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1195,9 +1227,33 @@
 						],
 						"type": "text/javascript"
 					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "password123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
 				"method": "DELETE",
 				"header": [
 					{
@@ -1261,7 +1317,28 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					""
+					"const options = {",
+					"  url : 'https://restful-booker.herokuapp.com/auth',",
+					"  method : 'POST',",
+					"  header: {",
+					"    'Accept': '*/*',",
+					"    'Content-Type': 'application/x-www-form-urlencoded',",
+					"  },",
+					"  body: {",
+					"    mode: 'urlencoded',",
+					"    urlencoded : [",
+					"      { key: 'username', value: 'admin'},",
+					"      { key: 'password', value: 'password123'},",
+					"    ]",
+					"  }",
+					"};",
+					"",
+					"// Seta o token na variável token utilizada no teste GetBooking",
+					"pm.sendRequest(options, function(err, response){",
+					"    console.log(\"get token\");",
+					"    console.log(response.json().token);",
+					"    const token = pm.collectionVariables.set(\"token\", response.json().token)",
+					"});"
 				]
 			}
 		},
