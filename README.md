@@ -2,7 +2,7 @@
 
 [![Java CI with Maven](https://github.com/KarinaYamashita/api-automation-tests-booker-rest-assured/actions/workflows/maven.yml/badge.svg)](https://github.com/KarinaYamashita/api-automation-tests-booker-rest-assured/actions/workflows/maven.yml)
 
-Esse repositório contém uma aplicação para testes de performace da API : **[restful-booker](https://restful-booker.herokuapp.com/)**. A aplicação foi desenvolvida em Java, utilizando o Java DSL REST Assured, empregando BDD e Continuous Integretion (CI) com GitHub Actions. 
+Esse repositório contém uma aplicação para testes de performance da API : **[restful-booker](https://restful-booker.herokuapp.com/)**. A aplicação foi desenvolvida em Java, utilizando o Java DSL REST Assured, empregando BDD e Continuous Integretion (CI) com GitHub Actions. 
 
 Você pode conferir os resultados dos testes **[clicando aqui](https://karinayamashita.github.io/api-automation-tests-booker-rest-assured/)**.
 
